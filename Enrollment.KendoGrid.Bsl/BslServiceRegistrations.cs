@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Microsoft.Extensions.DependencyInjection
 #pragma warning restore IDE0130
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public static class BslServiceRegistrations
     {
         public static IServiceCollection AddAutoMapperConfiguration(this IServiceCollection services)

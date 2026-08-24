@@ -1,0 +1,15 @@
+services:
+  enrollment.kendogrid.api:
+    image: ${DOCKER_REGISTRY-}enrollmentkendogridapi
+    build:
+      context: .
+      dockerfile: Enrollment.KendoGrid.Api/Dockerfile
+    depends_on:
+      - enrollment.kendogrid.bsl
+
+  enrollment.kendogrid.bsl:
+    image: ${DOCKER_REGISTRY-}enrollmentkendogridbsl
+    build:
+      context: .
+      dockerfile: Enrollment.KendoGrid.Bsl/Dockerfile
+

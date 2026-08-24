@@ -1,8 +1,7 @@
 using System;
 
-namespace Enrollment.KendoGrid.Bsl
+namespace Enrollment.KendoGrid.Api
 {
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class WeatherForecast
     {
         public DateOnly Date { get; set; }

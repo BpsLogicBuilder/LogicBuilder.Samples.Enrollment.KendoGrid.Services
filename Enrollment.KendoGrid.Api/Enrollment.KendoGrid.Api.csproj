@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>595ea630-6a3c-4bc4-94fd-ec445ed42565</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.9.0" />
+		<PackageReference Include="LogicBuilder.App.KendoGrid.Bsl.Business" Version="1.0.2" />
+		<PackageReference Include="LogicBuilder.App.Utils" Version="1.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.24.1-preview.1" />
+  </ItemGroup>
+
+</Project>

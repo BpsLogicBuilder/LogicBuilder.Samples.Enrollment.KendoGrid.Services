@@ -29,3 +29,9 @@ app.UseAuthorization();
 app.MapControllers();
 
 await app.RunAsync();
+
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+public partial class Program
+{
+    protected Program() { }
+}
