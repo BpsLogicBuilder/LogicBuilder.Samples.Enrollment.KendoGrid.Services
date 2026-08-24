@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/API/" />
+  <Folder Name="/BSL/">
+    <Project Path="Enrollment.BSL.AutoMapperProfiles/Enrollment.BSL.AutoMapperProfiles.csproj" />
+    <Project Path="Enrollment.KendoGrid.Bsl/Enrollment.KendoGrid.Bsl.csproj" />
+  </Folder>
+  <Folder Name="/Business/">
+    <Project Path="Enrollment.Domain/Enrollment.Domain.csproj" />
+    <Project Path="Enrollment.Repositories/Enrollment.Repositories.csproj" />
+  </Folder>
+  <Folder Name="/EF/">
+    <Project Path="Enrollment.Contexts/Enrollment.Contexts.csproj" />
+    <Project Path="Enrollment.Data/Enrollment.Data.csproj" />
+    <Project Path="Enrollment.Stores/Enrollment.Stores.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Enrollment.KendoGrid.Bsl.Tests/Enrollment.KendoGrid.Bsl.Tests.csproj" />
+  </Folder>
+</Solution>

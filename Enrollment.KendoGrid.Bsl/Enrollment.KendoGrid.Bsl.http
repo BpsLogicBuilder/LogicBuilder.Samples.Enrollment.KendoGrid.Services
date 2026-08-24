@@ -1,0 +1,6 @@
+@Enrollment.KendoGrid.Bsl_HostAddress = http://localhost:5005
+
+GET {{Enrollment.KendoGrid.Bsl_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

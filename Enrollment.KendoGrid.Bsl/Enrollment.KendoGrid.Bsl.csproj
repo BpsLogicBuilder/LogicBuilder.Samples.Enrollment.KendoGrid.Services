@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>a3ae9c17-5427-470b-b5d1-321330635379</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+		<PackageReference Include="LogicBuilder.App.KendoGrid.Bsl.Utils" Version="1.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="10.0.11" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.24.1-preview.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Enrollment.BSL.AutoMapperProfiles\Enrollment.BSL.AutoMapperProfiles.csproj" />
+    <ProjectReference Include="..\Enrollment.Repositories\Enrollment.Repositories.csproj" />
+  </ItemGroup>
+
+</Project>
