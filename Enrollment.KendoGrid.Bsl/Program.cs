@@ -14,7 +14,7 @@ builder.Services
     .AddAutoMapperConfiguration()
     .AddKendoGridBslUtilsServices()
     .AddAppUtilsMappingOperations()
-    .AddGridRequestServices(); ;
+    .AddGridRequestServices();
 
 var app = builder.Build();
 
