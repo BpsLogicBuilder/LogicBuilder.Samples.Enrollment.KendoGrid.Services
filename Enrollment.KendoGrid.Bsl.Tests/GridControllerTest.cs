@@ -64,6 +64,39 @@ namespace Enrollment.KendoGrid.Bsl.Tests
         }
 
         [Fact]
+        public async Task Get_persons_ungrouped_with_aggregates_filtered()
+        {
+            //arrange
+            KendoGridDataRequest request = new()
+            {
+                Options = new KendoGridDataSourceRequestOptions
+                {
+                    Aggregate = "lastName-count~zipCode-min",
+                    Filter = "userid~neq~100",
+                    Group = null,
+                    Page = 1,
+                    Sort = "zipCode-asc",
+                    PageSize = 5
+                },
+                ModelType = typeof(PersonalModel).AssemblyQualifiedName,
+                DataType = typeof(Personal).AssemblyQualifiedName
+            };
+
+            IRequestHelper helper = serviceProvider.GetRequiredService<IRequestHelper>();
+            GridController controller = new(helper);
+
+            //act
+            DataSourceResult result = await controller.GetData(request);
+
+            //assert
+            Assert.Equal(2, result.Total);
+            Assert.Equal(2, ((IEnumerable<PersonalModel>)result.Data).Count());
+            Assert.Equal(2, result.AggregateResults.Count());
+            Assert.Equal("Count", result.AggregateResults.First().AggregateMethodName);
+            Assert.Equal(2, (int)result.AggregateResults.First().Value);
+        }
+
+        [Fact]
         public async Task Get_persons_grouped_with_aggregates()
         {
             //arrange
