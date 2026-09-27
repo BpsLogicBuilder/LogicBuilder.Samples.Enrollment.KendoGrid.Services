@@ -15,6 +15,12 @@
     <Project Path="Enrollment.Data/Enrollment.Data.csproj" />
     <Project Path="Enrollment.Stores/Enrollment.Stores.csproj" />
   </Folder>
+  <Folder Name="/Infra/">
+    <File Path="infrastructure/BicepCli_enrollmentapi.txt" />
+    <File Path="infrastructure/BicepCli_enrollmentbsl.txt" />
+    <File Path="infrastructure/enrollmentkendogridapi.bicep" />
+    <File Path="infrastructure/enrollmentkendogridbsl.bicep" />
+  </Folder>
   <Folder Name="/Tests/">
     <Project Path="Enrollment.KendoGrid.Api.Tests/Enrollment.KendoGrid.Api.Tests.csproj" />
     <Project Path="Enrollment.KendoGrid.Bsl.Tests/Enrollment.KendoGrid.Bsl.Tests.csproj" />
