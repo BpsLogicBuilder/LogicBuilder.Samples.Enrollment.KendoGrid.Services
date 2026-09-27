@@ -1,0 +1,7 @@
+$rg = "rg-enrollment"
+$acrName="enrollacrkqgs34eylclic"
+$imageTag="v1.0.0"
+
+az acr build --registry $acrName --image "enrollmentkendogridbsl:${imageTag}" --image enrollmentkendogridbsl:latest --file ./Enrollment.KendoGrid.Bsl/Dockerfile . --secret-build-arg TELERIK_USERNAME="" --secret-build-arg TELERIK_PASSWORD=""
+
+az deployment group create --resource-group $rg --template-file infrastructure/enrollmentkendogridbsl.bicep --parameters imageTag="$imageTag" dbConnectionString='' expectedCerificateThumbprint=""

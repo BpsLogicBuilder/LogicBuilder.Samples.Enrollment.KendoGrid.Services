@@ -1,0 +1,7 @@
+$rg = "rg-enrollment"
+$acrName="enrollacrkqgs34eylclic"
+$imageTag="v1.0.0"
+
+az acr build --registry $acrName --image "enrollmentkendogridapi:${imageTag}" --image enrollmentkendogridapi:latest --file ./Enrollment.KendoGrid.Api/Dockerfile .
+
+az deployment group create --resource-group $rg --template-file infrastructure/enrollmentkendogridapi.bicep --parameters imageTag="$imageTag" keyVaultUrl="" bslCertificateName=""

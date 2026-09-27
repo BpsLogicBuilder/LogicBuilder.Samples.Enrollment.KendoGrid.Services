@@ -74,3 +74,122 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
+
+  deploy-api-service:
+    name: Deploy API Service
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'BpsLogicBuilder'
+    permissions:
+      id-token: write
+      contents: read
+    needs: test
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5
+      with:
+        client-id: ${{ secrets.ARM_DEPLOYER_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get Deployment Outputs
+      id: get_deployment_outputs
+      env:
+        RESOURCE_GROUP: ${{ secrets.AZURE_RG_ENROLLMENT }}
+      run: |
+          ACR_NAME=$(az deployment group show --resource-group ${{ env.RESOURCE_GROUP }} --name main --query properties.outputs.acrName.value -o tsv)
+          echo "::add-mask::$ACR_NAME"
+
+          ENROLLMENT_KEY_VAULT_NAME=$(az deployment group show --resource-group ${{ env.RESOURCE_GROUP }} --name main --query properties.outputs.keyVaultName.value -o tsv)
+          echo "::add-mask::$ENROLLMENT_KEY_VAULT_NAME"
+
+          ENROLLMENT_BSL_CERTIFICATE_NAME=$(az deployment group show --resource-group ${{ env.RESOURCE_GROUP }} --name main --query properties.outputs.enrollBslCertificateName.value -o tsv)
+          echo "::add-mask::$ENROLLMENT_BSL_CERTIFICATE_NAME"
+
+          echo "acr_name=$ACR_NAME" >> $GITHUB_OUTPUT
+          echo "enrollment_key_vault_name=$ENROLLMENT_KEY_VAULT_NAME" >> $GITHUB_OUTPUT
+          echo "enrollment_bsl_certificate_name=$ENROLLMENT_BSL_CERTIFICATE_NAME" >> $GITHUB_OUTPUT
+
+    - name: Build and Upload Image
+      env:
+        IMAGE_TAG: "v1.0.${{ github.run_number }}"
+        IMAGE_NAME: "enrollmentkendogridapi"
+        ACR_NAME: ${{ steps.get_deployment_outputs.outputs.acr_name }}
+      run: |
+        echo "ACR NAME ${{ env.ACR_NAME}}"
+        az acr build --registry ${{ env.ACR_NAME }} --image ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} --image ${{ env.IMAGE_NAME }}:latest --file ./Enrollment.KendoGrid.Api/Dockerfile .
+
+    - name: Update Enrollment.Api Container App image source
+      uses: azure/arm-deploy@65ae74fb7aec7c680c88ef456811f353adae4d06
+      env:
+        IMAGE_TAG: "v1.0.${{ github.run_number }}"
+        RESOURCE_GROUP: ${{ secrets.AZURE_RG_ENROLLMENT }}
+        ENROLLMENT_BSL_CERTIFICATE_NAME: ${{ steps.get_deployment_outputs.outputs.enrollment_bsl_certificate_name }}
+        ENROLLMENT_KEY_VAULT_NAME: ${{ steps.get_deployment_outputs.outputs.enrollment_key_vault_name }}
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ env.RESOURCE_GROUP}}
+        parameters: imageTag=${{ env.IMAGE_TAG }} keyVaultUrl="https://${{ env.ENROLLMENT_KEY_VAULT_NAME}}.vault.azure.net/" bslCertificateName="${{ env.ENROLLMENT_BSL_CERTIFICATE_NAME }}"
+        template: ./infrastructure/enrollmentkendogridapi.bicep
+        failOnStdErr: false
+
+  deploy-bsl-service:
+    name: Deploy BSL Service
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'BpsLogicBuilder'
+    permissions:
+      id-token: write
+      contents: read
+    needs: test
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - uses: azure/login@a457da9ea143d694b1b9c7c869ebb04ebe844ef5
+      with:
+        client-id: ${{ secrets.ARM_DEPLOYER_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get Deployment Outputs
+      id: get_deployment_outputs
+      env:
+        RESOURCE_GROUP: ${{ secrets.AZURE_RG_ENROLLMENT }}
+      run: |
+          ACR_NAME=$(az deployment group show --resource-group ${{ env.RESOURCE_GROUP }} --name main --query properties.outputs.acrName.value -o tsv)
+          echo "::add-mask::$ACR_NAME"
+
+          EXPECTED_CERTIFICATE_THUMBPRINT=$(az deployment group show --resource-group ${{ env.RESOURCE_GROUP }} --name main --query properties.outputs.enrollBslCertificateThumbprint.value -o tsv)
+          echo "::add-mask::$EXPECTED_CERTIFICATE_THUMBPRINT"
+
+          echo "acr_name=$ACR_NAME" >> $GITHUB_OUTPUT
+          echo "expected_certificate_thumbprint=$EXPECTED_CERTIFICATE_THUMBPRINT" >> $GITHUB_OUTPUT
+
+    - name: Build and Upload Enrollment.Bsl Image
+      env:
+        IMAGE_TAG: "v1.0.${{ github.run_number }}"
+        IMAGE_NAME: "enrollmentkendogridbsl"
+        ACR_NAME: ${{ steps.get_deployment_outputs.outputs.acr_name }}
+        TELERIK_USERNAME: ${{ secrets.TELERIK_USERNAME }}
+        TELERIK_PASSWORD: ${{ secrets.TELERIK_NUGET_KEY }}
+      run: |
+        echo "ACR NAME ${{ env.ACR_NAME }}"
+        az acr build --registry ${{ env.ACR_NAME }} --secret-build-arg TELERIK_USERNAME="${{ env.TELERIK_USERNAME }}" --secret-build-arg TELERIK_PASSWORD="${{ env.TELERIK_PASSWORD }}" --image ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} --image ${{ env.IMAGE_NAME }}:latest --file ./Enrollment.KendoGrid.Bsl/Dockerfile .
+
+    - name: Update Enrollment.Bsl Container App image source
+      uses: azure/arm-deploy@65ae74fb7aec7c680c88ef456811f353adae4d06
+      env:
+        IMAGE_TAG: "v1.0.${{ github.run_number }}"
+        RESOURCE_GROUP: ${{ secrets.AZURE_RG_ENROLLMENT }}
+        CONNECTION_STRING: ${{ secrets.ENROLLMENT_DB_CONNECTION_STRING }}
+        EXPECTED_CERTIFICATE_THUMBPRINT: ${{ steps.get_deployment_outputs.outputs.expected_certificate_thumbprint }}
+      with:
+        scope: resourcegroup
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+        resourceGroupName: ${{ env.RESOURCE_GROUP}}
+        parameters: imageTag=${{ env.IMAGE_TAG }} dbConnectionString="${{ env.CONNECTION_STRING }}" expectedCerificateThumbprint="${{ env.EXPECTED_CERTIFICATE_THUMBPRINT }}"
+        template: ./infrastructure/enrollmentkendogridbsl.bicep
+        failOnStdErr: false
