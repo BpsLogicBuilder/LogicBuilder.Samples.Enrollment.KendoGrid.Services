@@ -1,3 +1,4 @@
+* 2026-09-28 - AB#212: Add AKS CD workflow.
 * 2026-09-27 - AB#211: Add CD workflow.
 * 2026-08-24 - AB#209: Fix coverage reporting for CodeCov.
 * 2026-08-24 - AB#209: Remove empty statement.

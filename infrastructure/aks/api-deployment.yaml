@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enrollment-kendo-grid-api
+  namespace: ENROLLMENT_APP_NAMESPACE
+  labels:
+    app: enrollment-kendo-grid-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: enrollment-kendo-grid-api
+  template:
+    metadata:
+      labels:
+        app: enrollment-kendo-grid-api
+        azure.workload.identity/use: "true"
+    spec:
+      nodeSelector:
+        workload: apps
+      automountServiceAccountToken: false
+      serviceAccountName: ENROLLMENT_KENDO_GRID_API_SERVICEACCOUNT_NAME
+      containers:
+      - name: enrollment-kendo-grid-api
+        image: ACR_NAME.azurecr.io/enrollmentkendogridapi:IMAGE_TAG
+        ports:
+        - containerPort: 8080
+        env:
+        - name: APPLICATION_CONFIGURATION_ENDPOINT
+          value: "APP_CONFIG_ENDPOINT"
+        - name: baseBslUrl
+          value: "http://enrollment-kendo-grid-bsl:8080/" # NOSONAR - internal only service in DEV environment
+        - name: keyVaultUrl
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: keyVaultUrl
+        - name: bslCertificateName
+          value: "front-end-cert"
+        - name: AllowedOrigins__0
+          value: "*"
+        envFrom:
+        - configMapRef:
+            name: app-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+            ephemeral-storage: "512Mi"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /weatherforecast
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /weatherforecast
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
