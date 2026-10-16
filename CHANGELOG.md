@@ -1,3 +1,4 @@
+* 2026-10-16 - AB#248: CORS.
 * 2026-10-16 - AB#248: Fix service account name error.
 * 2026-09-28 - AB#212: Add AKS CD workflow.
 * 2026-09-27 - AB#211: Add CD workflow.

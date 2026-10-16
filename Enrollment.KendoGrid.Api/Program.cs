@@ -63,6 +63,8 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
+app.UseCors(SecureCorsPolicy);
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
