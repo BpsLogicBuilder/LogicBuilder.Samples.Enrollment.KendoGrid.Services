@@ -132,7 +132,7 @@ jobs:
         APP_CONFIG_ENDPOINT: ${{ steps.get_deployment_outputs.outputs.app_config_endpoint }}
         IMAGE_TAG: "v1.0.${{ github.run_number }}"
         ENROLLMENT_APP_NAMESPACE: ${{ steps.get_deployment_outputs.outputs.enrollment_app_namespace }}
-        ENROLLMENT_KENDO_GRID_API_SERVICEACCOUNT_NAME: ${{ steps.get_deployment_outputs.enrollment_kendo_grid_api_serviceaccount_name }}
+        ENROLLMENT_KENDO_GRID_API_SERVICEACCOUNT_NAME: ${{ steps.get_deployment_outputs.outputs.enrollment_kendo_grid_api_serviceaccount_name }}
       run: |
         sed -e "s|ACR_NAME|${{ env.ACR_NAME }}|g" \
         -e "s|APP_CONFIG_ENDPOINT|${{ env.APP_CONFIG_ENDPOINT }}|g" \
