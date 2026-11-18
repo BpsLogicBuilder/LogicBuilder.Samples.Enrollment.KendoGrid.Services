@@ -1,4 +1,5 @@
 using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Azure.Security.KeyVault.Certificates;
 using Enrollment.KendoGrid.Api;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,7 @@ builder.Services.AddCors(options =>
         }
     });
 });
+builder.Services.AddOpenTelemetry().UseAzureMonitor();
 builder.Services.AddControllers().AddJsonOptions
 (
     options =>
@@ -67,8 +69,16 @@ app.UseCors(SecureCorsPolicy);
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 await app.RunAsync();
+
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+public partial class Program
+{
+    protected Program() { }
+}

@@ -1,3 +1,7 @@
+* 2026-11-17 - AB#270: Exclude Program.cs from tests in dotnet-sonarscanner.
+* 2026-11-17 - AB#270: Exclude Program.cs from tests.
+* 2026-11-17 - AB#270: Fix test configuration to use settings.
+* 2026-11-17 - AB#270: Turn on Application Insights.
 * 2026-10-16 - AB#248: CORS.
 * 2026-10-16 - AB#248: Fix service account name error.
 * 2026-09-28 - AB#212: Add AKS CD workflow.
