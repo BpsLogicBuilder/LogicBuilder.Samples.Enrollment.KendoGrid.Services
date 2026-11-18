@@ -65,10 +65,12 @@ jobs:
         run: |
           dotnet test Enrollment.KendoGrid.Bsl.Tests/Enrollment.KendoGrid.Bsl.Tests.csproj \
           --verbosity normal --configuration Release \
-          --coverage --results-directory ./TestResults/ \
-          /p:GraphQLCodeCoverageFilters="-Module%3B[*Enrollment.KendoGrid.Api]*" \
-          /p:GraphQLCodeCoverageFilters="-Attribute%3B[.*]..*GeneratedCodeAttribute.*" \
-          -- --coverage-output-format xml --coverage-output coverage.xml
+          --results-directory ./TestResults/ \
+          -- \
+          --coverage \
+          --coverage-settings CodeCoverage.runsettings \
+          --coverage-output-format xml \
+          --coverage-output coverage.xml
 
       - name: End SonarQube Cloud analysis
         env:
