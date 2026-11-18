@@ -1,3 +1,4 @@
+* 2026-11-17 - AB#270: Exclude Program.cs from tests in dotnet-sonarscanner.
 * 2026-11-17 - AB#270: Exclude Program.cs from tests.
 * 2026-11-17 - AB#270: Fix test configuration to use settings.
 * 2026-11-17 - AB#270: Turn on Application Insights.
